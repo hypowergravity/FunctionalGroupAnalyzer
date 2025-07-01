@@ -98,8 +98,8 @@ function Footer() {
           <h3>About This Application</h3>
           <p>
             This Functional Group Analyzer was developed to identify and analyze 
-            functional groups in molecular structures using advanced cheminformatics 
-            and machine learning approaches.
+            functional groups in molecular structures that are commonly found in RXNO(name reaction ontology). The implemented list is not exhaustive and is subject to change. The Hierarchical
+            classification of functional groups is not implemented yet.
           </p>
           <p>
             The application leverages multiple chemical databases and computational 
@@ -138,20 +138,20 @@ function Footer() {
       <DeveloperSection>
         <h4>Developer</h4>
         <p><strong>Sriram Srinivasa Raghavan</strong></p>
-        <p>Chemical Informatics & Computational Chemistry</p>
+        
         <p>
-          This application was developed as part of research in automated 
-          functional group analysis and chemical reaction prediction.
+          This application was developed as a hobby project to 
+          analyze functional group for chemical reaction prediction.
         </p>
       </DeveloperSection>
 
       <Copyright>
         <p>
           © 2025 Functional Group Analyzer. Developed by Sriram Srinivasa Raghavan. 
-          Built with React, Flask, and RDKit.
+          
         </p>
         <p>
-          For research and educational purposes. Data sources: RXNO, ChEMBL, ChEBI.
+          Data sources: RXNO, ChEMBL, ChEBI.
         </p>
       </Copyright>
     </FooterContainer>
