@@ -1,7 +1,6 @@
 # Functional Group Analyzer Web Application
 
-A web application for analyzing functional groups in molecular structures, built with React frontend and Flask backend, deployed on Render.com.
-
+A web application for analyzing functional groups in molecular structures, built with React frontend and Flask backend.
 ## Features
 
 - **Molecular Input**: Support for SMILES, SMARTS, and MOL file formats
@@ -10,7 +9,7 @@ A web application for analyzing functional groups in molecular structures, built
 - **Real-time Results**: Fast analysis with detailed functional group information
 - **ChEBI Integration**: Links to ChEBI database for additional chemical information
 
-## Setup Instructions
+## Setup instructions for local deployment.
 
 ### Prerequisites
 
@@ -24,7 +23,7 @@ A web application for analyzing functional groups in molecular structures, built
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/yourusername/functional-group-analyzer.git
+   git clone https://github.com/hypowergravity/FunctionalGroupAnalyzer.git
    cd functional-group-analyzer
    ```
 
@@ -55,20 +54,7 @@ A web application for analyzing functional groups in molecular structures, built
 
 3. Open [http://localhost:3000](http://localhost:3000) to view the application.
 
-### Deployment to Render.com
 
-1. **Push to GitHub**:
-   ```bash
-   git add .
-   git commit -m "Deploy to Render"
-   git push origin main
-   ```
-
-2. **Deploy on Render**:
-   - Go to [render.com](https://render.com)
-   - Connect your GitHub repository
-   - Render will auto-detect `render.yaml` and deploy both services
-   - Your app will be live in ~5 minutes!
 
 ## Usage
 
@@ -94,26 +80,7 @@ A web application for analyzing functional groups in molecular structures, built
 - **Hosting**: Render.com (free tier)
 - **Database**: JSON file (functional groups database)
 
-## File Structure
-
-```
-├── public/                 # Static files
-├── src/
-│   ├── components/        # React components
-│   │   ├── MoleculeInput.js
-│   │   └── FunctionalGroupResults.js
-│   ├── services/          # API services
-│   │   └── api.js
-│   ├── App.js            # Main application component
-│   └── index.js          # Application entry point
-├── backend/              # Flask backend
-│   ├── app.py           # Flask application
-│   ├── FunctionalCatalog.py  # Analysis logic
-│   ├── requirements.txt  # Python dependencies
-│   └── functional_group_with_chebi_updated.json
-├── render.yaml          # Render.com deployment config
-└── package.json         # Node.js dependencies
-```
+#
 
 ## Data Sources
 
@@ -124,18 +91,7 @@ The application uses a comprehensive functional group database (`functional_grou
 - Chemical categorization
 - Reactivity information
 
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
 
 ## License
 
 This project is licensed under the MIT License.
-
-## Support
-
-For questions or issues, please open an issue on the GitHub repository.
