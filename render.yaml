@@ -1,0 +1,24 @@
+services:
+  # Backend Flask API
+  - type: web
+    name: functional-group-backend
+    env: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn app:app"
+    plan: free
+    rootDir: ./backend
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.9.7
+        
+  # Frontend React App
+  - type: web
+    name: functional-group-frontend
+    env: static
+    buildCommand: "npm install && npm run build"
+    staticPublishPath: ./build
+    plan: free
+    pullRequestPreviewsEnabled: false
+    envVars:
+      - key: NODE_VERSION
+        value: 18
