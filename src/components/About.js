@@ -112,9 +112,9 @@ function About() {
       <AboutHeader>
         <h2>About Functional Group Analyzer</h2>
         <p>
-          Advanced computational platform for automated functional group
-          identification and chemical reaction analysis using state-of-the-art
-          cheminformatics and machine learning methodologies.
+          A simple web application for basic functional group identification and
+          chemical reaction exploration, built using introductory
+          cheminformatics and machine learning approaches.
         </p>
       </AboutHeader>
 
@@ -168,10 +168,6 @@ function About() {
             <span className="highlight">RDKit</span>
             for SMARTS pattern matching, substructure detection, and molecular
             visualization.
-          </p>
-          <p>
-            Advanced algorithms ensure accurate pattern recognition and generate
-            high-quality molecular visualizations.
           </p>
         </MethodCard>
       </MethodsGrid>
