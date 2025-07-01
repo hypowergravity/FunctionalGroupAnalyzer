@@ -8,6 +8,22 @@ const ResultsContainer = styled.div`
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 `;
 
+const MoleculeVisualization = styled.div`
+  text-align: center;
+  margin: 30px 0;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 2px solid #e9ecef;
+`;
+
+const MoleculeImage = styled.img`
+  max-width: 100%;
+  height: auto;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+`;
+
 const Summary = styled.div`
   background: #f8f9fa;
   padding: 20px;
@@ -240,7 +256,7 @@ function FunctionalGroupResults({ result }) {
     );
   }
 
-  const { matches, groups_data } = result;
+  const { matches, groups_data, image } = result;
 
   return (
     <ResultsContainer>
@@ -251,6 +267,19 @@ function FunctionalGroupResults({ result }) {
           {matches.length > 0 ? ':' : ' in this molecule.'}
         </SummaryText>
       </Summary>
+
+      {image && (
+        <MoleculeVisualization>
+          <h3 style={{marginTop: 0, color: '#333'}}>Molecular Structure with Highlighted Functional Groups</h3>
+          <MoleculeImage 
+            src={`data:image/png;base64,${image}`} 
+            alt="Molecule with highlighted functional groups"
+          />
+          <p style={{marginBottom: 0, fontSize: '0.9rem', color: '#666'}}>
+            Different colors represent different functional groups
+          </p>
+        </MoleculeVisualization>
+      )}
 
       {matches.length > 0 && (
         <GroupsGrid>

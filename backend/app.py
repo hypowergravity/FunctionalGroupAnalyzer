@@ -80,12 +80,28 @@ def analyze_molecule():
         # Get detailed information for each match
         groups_data = analyzer.get_groups_data()
         
+        # Generate molecular visualization
+        image_data = None
+        try:
+            from FunctionalCatalog import visualize_matches
+            img = visualize_matches(mol_obj.mol, analyzer.get_compiled_patterns(), matches)
+            if img:
+                import base64
+                from io import BytesIO
+                buffer = BytesIO()
+                img.save(buffer, format='PNG')
+                buffer.seek(0)
+                image_data = base64.b64encode(buffer.getvalue()).decode('utf-8')
+        except Exception as e:
+            print(f"Error generating visualization: {e}")
+        
         result = {
             'matches': matches,
             'groups_data': {name: groups_data.get(name, {}) for name in matches},
             'input_type': input_type,
             'success': True,
-            'total_matches': len(matches)
+            'total_matches': len(matches),
+            'image': image_data  # Base64 encoded image
         }
         
         return jsonify(result)
