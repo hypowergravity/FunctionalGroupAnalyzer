@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import MoleculeInput from './components/MoleculeInput';
-import MoleculeDrawer from './components/MoleculeDrawer';
 import FunctionalGroupResults from './components/FunctionalGroupResults';
 import { analyzeMolecule } from './services/api';
 
@@ -42,32 +41,11 @@ const LoadingSpinner = styled.div`
   color: #666;
 `;
 
-const TabContainer = styled.div`
-  display: flex;
-  margin-bottom: 20px;
-  border-bottom: 2px solid #e9ecef;
-`;
-
-const Tab = styled.button`
-  padding: 12px 24px;
-  border: none;
-  background: ${props => props.active ? '#667eea' : 'transparent'};
-  color: ${props => props.active ? 'white' : '#666'};
-  border-radius: 8px 8px 0 0;
-  cursor: pointer;
-  font-weight: ${props => props.active ? 'bold' : 'normal'};
-  transition: all 0.3s ease;
-  
-  &:hover {
-    background: ${props => props.active ? '#5a6fd8' : '#f8f9fa'};
-  }
-`;
 
 function App() {
   const [analysisResult, setAnalysisResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [activeTab, setActiveTab] = useState('input'); // 'input' or 'draw'
 
   const handleMoleculeAnalysis = async (moleculeData) => {
     setLoading(true);
@@ -93,31 +71,7 @@ function App() {
         </Subtitle>
       </Header>
 
-      <TabContainer>
-        <Tab 
-          active={activeTab === 'input'} 
-          onClick={() => setActiveTab('input')}
-        >
-          📝 Input SMILES/MOL
-        </Tab>
-        <Tab 
-          active={activeTab === 'draw'} 
-          onClick={() => setActiveTab('draw')}
-        >
-          ✏️ Draw Molecule
-        </Tab>
-      </TabContainer>
-
-      {activeTab === 'input' && (
-        <MoleculeInput onAnalyze={handleMoleculeAnalysis} />
-      )}
-
-      {activeTab === 'draw' && (
-        <MoleculeDrawer 
-          onMoleculeChange={(data) => console.log('Molecule changed:', data)}
-          onAnalyze={handleMoleculeAnalysis}
-        />
-      )}
+      <MoleculeInput onAnalyze={handleMoleculeAnalysis} />
 
       {loading && (
         <LoadingSpinner>

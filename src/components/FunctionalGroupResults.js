@@ -108,6 +108,28 @@ const SmartsPattern = styled.div`
   border: 1px solid #ddd;
 `;
 
+const GroupImage = styled.div`
+  text-align: center;
+  margin: 15px 0;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+`;
+
+const GroupImageTitle = styled.h4`
+  margin: 0 0 10px 0;
+  color: #555;
+  font-size: 0.9rem;
+`;
+
+const GroupImageImg = styled.img`
+  max-width: 100%;
+  height: auto;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+`;
+
 const ToggleButton = styled.button`
   background: #667eea;
   color: white;
@@ -138,17 +160,22 @@ const ChEBILink = styled.a`
   }
 `;
 
-function FunctionalGroupCard({ group }) {
+function FunctionalGroupCard({ group, individualImage }) {
   const [showDetails, setShowDetails] = useState(false);
 
   return (
     <GroupCard>
       <GroupName>{group.name}</GroupName>
-      
-      <GroupInfo>
-        <InfoLabel>ID:</InfoLabel>
-        <InfoValue>{group.id || 'N/A'}</InfoValue>
-      </GroupInfo>
+
+      {individualImage && (
+        <GroupImage>
+          <GroupImageTitle>Structure in Molecule</GroupImageTitle>
+          <GroupImageImg 
+            src={`data:image/png;base64,${individualImage}`}
+            alt={`${group.name} highlighted in molecule`}
+          />
+        </GroupImage>
+      )}
 
       <GroupInfo>
         <InfoLabel>Description:</InfoLabel>
@@ -256,7 +283,7 @@ function FunctionalGroupResults({ result }) {
     );
   }
 
-  const { matches, groups_data, image } = result;
+  const { matches, groups_data, image, individual_images } = result;
 
   return (
     <ResultsContainer>
@@ -287,6 +314,7 @@ function FunctionalGroupResults({ result }) {
             <FunctionalGroupCard 
               key={index}
               group={groups_data[groupName] || { name: groupName }}
+              individualImage={individual_images && individual_images[groupName]}
             />
           ))}
         </GroupsGrid>

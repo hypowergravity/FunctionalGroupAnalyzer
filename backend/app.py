@@ -82,16 +82,38 @@ def analyze_molecule():
         
         # Generate molecular visualization
         image_data = None
+        individual_images = {}
         try:
-            from FunctionalCatalog import visualize_matches
+            from FunctionalCatalog import visualize_matches, show_individual_matches
+            import base64
+            from io import BytesIO
+            
+            # Generate main molecule image with all functional groups highlighted
             img = visualize_matches(mol_obj.mol, analyzer.get_compiled_patterns(), matches)
             if img:
-                import base64
-                from io import BytesIO
                 buffer = BytesIO()
                 img.save(buffer, format='PNG')
                 buffer.seek(0)
                 image_data = base64.b64encode(buffer.getvalue()).decode('utf-8')
+            
+            # Generate individual functional group images
+            for match_name in matches:
+                try:
+                    # Create image with only this functional group highlighted
+                    individual_img = visualize_matches(
+                        mol_obj.mol, 
+                        analyzer.get_compiled_patterns(), 
+                        [match_name],
+                        img_size=(300, 300)
+                    )
+                    if individual_img:
+                        buffer = BytesIO()
+                        individual_img.save(buffer, format='PNG')
+                        buffer.seek(0)
+                        individual_images[match_name] = base64.b64encode(buffer.getvalue()).decode('utf-8')
+                except Exception as e:
+                    print(f"Error generating individual image for {match_name}: {e}")
+                    
         except Exception as e:
             print(f"Error generating visualization: {e}")
         
@@ -101,7 +123,8 @@ def analyze_molecule():
             'input_type': input_type,
             'success': True,
             'total_matches': len(matches),
-            'image': image_data  # Base64 encoded image
+            'image': image_data,  # Base64 encoded main image
+            'individual_images': individual_images  # Individual functional group images
         }
         
         return jsonify(result)
