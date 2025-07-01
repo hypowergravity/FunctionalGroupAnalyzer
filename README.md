@@ -1,6 +1,6 @@
 # Functional Group Analyzer Web Application
 
-A web application for analyzing functional groups in molecular structures, built with React frontend and Flask backend.
+A [web application](https://functionalgroupanalyzer-1.onrender.com/) for analyzing functional groups in molecular structures, built with React frontend and Flask backend.
 ## Features
 
 - **Molecular Input**: Support for SMILES, SMARTS, and MOL file formats
