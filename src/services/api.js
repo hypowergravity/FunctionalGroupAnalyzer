@@ -1,7 +1,7 @@
 // API service for communicating with Flask backend
 
 const API_BASE_URL = process.env.NODE_ENV === 'production' 
-  ? 'https://functional-group-backend.onrender.com/api'  // Update this with your actual backend URL
+  ? 'https://functionalgroupanalyzer.onrender.com/api'
   : 'http://localhost:5000/api';
 
 export const analyzeMolecule = async (moleculeData) => {
