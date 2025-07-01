@@ -4,7 +4,7 @@ services:
     name: functional-group-backend
     env: python
     buildCommand: "cd backend && pip install -r requirements.txt"
-    startCommand: "cd backend && gunicorn app:app --host 0.0.0.0 --port $PORT"
+    startCommand: "cd backend && gunicorn app:app --bind 0.0.0.0:$PORT"
     plan: free
     envVars:
       - key: PYTHON_VERSION

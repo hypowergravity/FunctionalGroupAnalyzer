@@ -140,3 +140,6 @@ if __name__ == '__main__':
     
     # Run the app
     app.run(host='0.0.0.0', port=port, debug=False)
+
+# Initialize analyzer when module is imported (for gunicorn)
+initialize_analyzer()
