@@ -3,8 +3,16 @@ from rdkit.Chem import Draw
 from rdkit.Chem.Draw import rdMolDraw2D
 from rdkit.Chem import AllChem
 import json
-import matplotlib.pyplot as plt
-from PIL import Image
+try:
+    import matplotlib.pyplot as plt
+    import matplotlib
+    matplotlib.use('Agg')  # Use non-interactive backend
+except ImportError:
+    plt = None
+try:
+    from PIL import Image
+except ImportError:
+    Image = None
 import io
 
 

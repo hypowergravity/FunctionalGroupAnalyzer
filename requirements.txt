@@ -1,0 +1,2 @@
+# This file specifies Python version for Render.com
+# Actual dependencies are in backend/requirements.txt
