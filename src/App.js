@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import MoleculeInput from './components/MoleculeInput';
 import FunctionalGroupResults from './components/FunctionalGroupResults';
+import About from './components/About';
+import Footer from './components/Footer';
 import { analyzeMolecule } from './services/api';
 
 const Container = styled.div`
@@ -41,11 +43,38 @@ const LoadingSpinner = styled.div`
   color: #666;
 `;
 
+const NavBar = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin: 20px 0;
+  padding: 10px;
+  background: white;
+  border-radius: 25px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+`;
+
+const NavButton = styled.button`
+  padding: 10px 20px;
+  border: none;
+  background: ${props => props.active ? '#667eea' : 'transparent'};
+  color: ${props => props.active ? 'white' : '#666'};
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    background: ${props => props.active ? '#5a6fd8' : '#f8f9fa'};
+  }
+`;
+
 
 function App() {
   const [analysisResult, setAnalysisResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [currentView, setCurrentView] = useState('analyzer'); // 'analyzer' or 'about'
 
   const handleMoleculeAnalysis = async (moleculeData) => {
     setLoading(true);
@@ -63,39 +92,64 @@ function App() {
   };
 
   return (
-    <Container>
-      <Header>
-        <Title>Functional Group Analyzer</Title>
-        <Subtitle>
-          Identify and analyze functional groups in molecular structures
-        </Subtitle>
-      </Header>
+    <div>
+      <Container>
+        <Header>
+          <Title>Functional Group Analyzer</Title>
+          <Subtitle>
+            Identify and analyze functional groups in molecular structures
+          </Subtitle>
+        </Header>
 
-      <MoleculeInput onAnalyze={handleMoleculeAnalysis} />
+        <NavBar>
+          <NavButton 
+            active={currentView === 'analyzer'}
+            onClick={() => setCurrentView('analyzer')}
+          >
+            🧪 Analyzer
+          </NavButton>
+          <NavButton 
+            active={currentView === 'about'}
+            onClick={() => setCurrentView('about')}
+          >
+            📖 About
+          </NavButton>
+        </NavBar>
 
-      {loading && (
-        <LoadingSpinner>
-          Analyzing molecule... Please wait.
-        </LoadingSpinner>
-      )}
+        {currentView === 'analyzer' && (
+          <>
+            <MoleculeInput onAnalyze={handleMoleculeAnalysis} />
 
-      {error && (
-        <div style={{ 
-          color: 'red', 
-          textAlign: 'center', 
-          padding: '20px',
-          backgroundColor: '#ffe6e6',
-          borderRadius: '5px',
-          margin: '20px 0'
-        }}>
-          Error: {error}
-        </div>
-      )}
+            {loading && (
+              <LoadingSpinner>
+                Analyzing molecule... Please wait.
+              </LoadingSpinner>
+            )}
 
-      {analysisResult && !loading && (
-        <FunctionalGroupResults result={analysisResult} />
-      )}
-    </Container>
+            {error && (
+              <div style={{ 
+                color: 'red', 
+                textAlign: 'center', 
+                padding: '20px',
+                backgroundColor: '#ffe6e6',
+                borderRadius: '5px',
+                margin: '20px 0'
+              }}>
+                Error: {error}
+              </div>
+            )}
+
+            {analysisResult && !loading && (
+              <FunctionalGroupResults result={analysisResult} />
+            )}
+          </>
+        )}
+
+        {currentView === 'about' && <About />}
+      </Container>
+      
+      <Footer />
+    </div>
   );
 }
 
