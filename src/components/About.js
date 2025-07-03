@@ -134,10 +134,10 @@ function About() {
         </MethodCard>
 
         <MethodCard>
-          <h3> ChemBERT Model</h3>
+          <h3> ChemDataExtractor</h3>
           <p>
             Leveraging the{" "}
-            <span className="highlight">ChemBERT transformer model</span>, we
+            <span className="highlight">ChemDataExtractor hybrid model</span>, we
             performed automated extraction of functional group information from
             chemical literature and databases.
           </p>
