@@ -116,7 +116,7 @@ function Footer() {
               reaction-specific functional group patterns and chemical transformations
             </li>
             <li>
-              <strong>ChemBERT Model:</strong> Applied for automated functional 
+              <strong>ChemDataExtractor:</strong> Applied for automated functional 
               group extraction and chemical entity recognition from literature
             </li>
             <li>
