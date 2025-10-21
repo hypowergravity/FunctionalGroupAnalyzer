@@ -297,9 +297,10 @@ def safe_remove_hs(mol):
         return mol
 
 
-def find_matches(target_mol, compiled_patterns):
-    """Find matches with proper error handling"""
+def find_matches(target_mol, compiled_patterns, filter_ring_overlaps=True):
+    """Find matches with proper error handling and ring overlap prevention"""
     matches_keys = []
+    matches_with_atoms = []  # Store matches with their atom indices
 
     # Create variants with proper ring info initialization
     target_with_h = safe_add_hs(target_mol)
@@ -307,25 +308,149 @@ def find_matches(target_mol, compiled_patterns):
 
     for pattern_name, pattern_mol in compiled_patterns.items():
         found_match = False
+        match_atoms = None
 
         try:
             # Try matching against original molecule
             if target_mol.HasSubstructMatch(pattern_mol):
                 found_match = True
+                match_atoms = target_mol.GetSubstructMatch(pattern_mol)
             # Try with explicit hydrogens
             elif target_with_h and target_with_h.HasSubstructMatch(pattern_mol):
                 found_match = True
+                match_atoms = target_with_h.GetSubstructMatch(pattern_mol)
             # Try without explicit hydrogens
             elif target_no_h and target_no_h.HasSubstructMatch(pattern_mol):
                 found_match = True
+                match_atoms = target_no_h.GetSubstructMatch(pattern_mol)
         except Exception as e:
             print(f"Error matching pattern {pattern_name}: {e}")
             continue
 
-        if found_match:
-            matches_keys.append(pattern_name)
+        if found_match and match_atoms:
+            matches_with_atoms.append((pattern_name, match_atoms))
+
+    if filter_ring_overlaps:
+        # Filter out overlapping matches in ring systems
+        filtered_matches = filter_ring_subfunctional_overlaps(target_mol, matches_with_atoms)
+        matches_keys = [match[0] for match in filtered_matches]
+    else:
+        matches_keys = [match[0] for match in matches_with_atoms]
 
     return sorted(matches_keys)
+
+
+def filter_ring_subfunctional_overlaps(target_mol, matches_with_atoms):
+    """
+    Filter out subfunctional group overlaps in ring systems.
+    
+    Args:
+        target_mol: The target molecule
+        matches_with_atoms: List of (pattern_name, match_atoms) tuples
+        
+    Returns:
+        Filtered list of matches without ring subfunctional overlaps
+    """
+    if not matches_with_atoms:
+        return matches_with_atoms
+    
+    # Initialize ring information
+    try:
+        Chem.FastFindRings(target_mol)
+        ring_info = target_mol.GetRingInfo()
+    except Exception as e:
+        print(f"Warning: Could not analyze rings for overlap filtering: {e}")
+        return matches_with_atoms
+    
+    # Group matches by whether they involve ring atoms
+    ring_matches = []
+    non_ring_matches = []
+    
+    for pattern_name, match_atoms in matches_with_atoms:
+        # Check if any matched atoms are in rings
+        atoms_in_rings = []
+        atoms_not_in_rings = []
+        
+        for atom_idx in match_atoms:
+            if ring_info.IsAtomInRingOfSize(atom_idx, 3) or \
+               ring_info.IsAtomInRingOfSize(atom_idx, 4) or \
+               ring_info.IsAtomInRingOfSize(atom_idx, 5) or \
+               ring_info.IsAtomInRingOfSize(atom_idx, 6) or \
+               ring_info.IsAtomInRingOfSize(atom_idx, 7) or \
+               ring_info.IsAtomInRingOfSize(atom_idx, 8):
+                atoms_in_rings.append(atom_idx)
+            else:
+                atoms_not_in_rings.append(atom_idx)
+        
+        if atoms_in_rings:
+            ring_matches.append((pattern_name, match_atoms, atoms_in_rings, atoms_not_in_rings))
+        else:
+            non_ring_matches.append((pattern_name, match_atoms))
+    
+    # Filter ring matches for overlaps
+    filtered_ring_matches = []
+    
+    # Sort ring matches by size (larger patterns first to keep more specific matches)
+    ring_matches.sort(key=lambda x: len(x[1]), reverse=True)
+    
+    for i, (pattern_name, match_atoms, ring_atoms, non_ring_atoms) in enumerate(ring_matches):
+        is_subpattern = False
+        
+        # Check if this pattern is a substructure of a larger already-accepted pattern
+        for accepted_name, accepted_atoms, accepted_ring_atoms, accepted_non_ring_atoms in filtered_ring_matches:
+            # If all ring atoms of current pattern are contained in accepted pattern's ring atoms
+            if set(ring_atoms).issubset(set(accepted_ring_atoms)):
+                # And the patterns share the same ring system
+                if _patterns_share_ring_system(target_mol, ring_atoms, accepted_ring_atoms, ring_info):
+                    is_subpattern = True
+                    print(f"  Filtering out '{pattern_name}' as it overlaps with '{accepted_name}' in ring system")
+                    break
+        
+        if not is_subpattern:
+            filtered_ring_matches.append((pattern_name, match_atoms, ring_atoms, non_ring_atoms))
+    
+    # Combine filtered ring matches with non-ring matches
+    final_matches = []
+    
+    # Add non-ring matches (no filtering needed)
+    for pattern_name, match_atoms in non_ring_matches:
+        final_matches.append((pattern_name, match_atoms))
+    
+    # Add filtered ring matches
+    for pattern_name, match_atoms, _, _ in filtered_ring_matches:
+        final_matches.append((pattern_name, match_atoms))
+    
+    return final_matches
+
+
+def _patterns_share_ring_system(mol, atoms1, atoms2, ring_info):
+    """
+    Check if two sets of atoms share the same ring system.
+    
+    Args:
+        mol: The molecule
+        atoms1: First set of atom indices
+        atoms2: Second set of atom indices
+        ring_info: Ring information from the molecule
+        
+    Returns:
+        True if the atom sets share a ring system
+    """
+    # Get all rings that contain atoms from each set
+    rings1 = set()
+    rings2 = set()
+    
+    for ring_idx in range(ring_info.NumRings()):
+        ring_atoms = set(ring_info.AtomRings()[ring_idx])
+        
+        if any(atom in ring_atoms for atom in atoms1):
+            rings1.add(ring_idx)
+        
+        if any(atom in ring_atoms for atom in atoms2):
+            rings2.add(ring_idx)
+    
+    # If they share any rings, they're in the same ring system
+    return len(rings1.intersection(rings2)) > 0
 
 
 def generate_colors(num_colors):
@@ -628,7 +753,7 @@ def main(target_input, show_detailed=False, show_visualizations=True, analyzer=N
     """
     # Create analyzer if not provided
     if analyzer is None:
-        json_file = "functional_group_with_chebi_updated.json"
+        json_file = "functional_group_with_chebi_updated_meaningful_names.json"#"functional_group_with_chebi_updated.json"
         try:
             analyzer = FunctionalGroupAnalyzer(json_file)
         except Exception as e:
