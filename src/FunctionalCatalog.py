@@ -753,7 +753,7 @@ def main(target_input, show_detailed=False, show_visualizations=True, analyzer=N
     """
     # Create analyzer if not provided
     if analyzer is None:
-        json_file = "functional_group_with_chebi_updated_meaningful_names.json"#"functional_group_with_chebi_updated.json"
+        json_file = "functional_group_with_chebi_updated.json"
         try:
             analyzer = FunctionalGroupAnalyzer(json_file)
         except Exception as e:
